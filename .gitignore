@@ -1,0 +1,23 @@
+# macOS
+.DS_Store
+
+# MoonBit
+target/
+target
+.mooncakes/
+.moonagent/
+_build/
+*.mbti
+
+# Environment
+.env
+
+# Build artifacts
+cmd/demo/main.js
+
+# Node
+node_modules/
+coverage/
+
+# temporary files
+tmp/
