@@ -1,0 +1,11 @@
+{
+  "import": [
+    { "path": "moonbitlang/async/socket", "alias": "socket" },
+    { "path": "moonbitlang/core/encoding/utf8", "alias": "utf8" }
+  ],
+  "targets": {
+    "broadcaster.mbt": ["and", ["not", "js"], ["not", "wasm-gc"]],
+    "connection.mbt": ["and", ["not", "js"], ["not", "wasm-gc"]],
+    "event.mbt": ["and", ["not", "js"], ["not", "wasm-gc"]]
+  }
+}

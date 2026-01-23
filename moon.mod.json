@@ -1,13 +1,14 @@
 {
   "name": "f4ah6o/sse",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "deps": {
-    "mizchi/js": "0.10.10"
+    "mizchi/js": "0.10.10",
+    "moonbitlang/async": "0.16.0"
   },
   "readme": "README.md",
-  "repository": "",
+  "repository": "https://github.com/f4ah6o/sse.mbt",
   "license": "Apache-2.0",
   "keywords": [],
-  "description": "Server-Sent Events (SSE) support for MoonBit/JS",
+  "description": "Server-Sent Events (SSE) support for MoonBit (JS client + Native server)",
   "preferred-target": "js"
 }
