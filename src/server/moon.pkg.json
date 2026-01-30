@@ -3,6 +3,7 @@
     { "path": "moonbitlang/async/socket", "alias": "socket" },
     { "path": "moonbitlang/core/encoding/utf8", "alias": "utf8" }
   ],
+  "warn-list": "-29",
   "targets": {
     "broadcaster.mbt": ["and", ["not", "js"], ["not", "wasm-gc"]],
     "connection.mbt": ["and", ["not", "js"], ["not", "wasm-gc"]],
