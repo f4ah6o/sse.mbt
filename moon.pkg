@@ -1,6 +1,4 @@
 options(
   "is-main": false,
-  targets: {
-    "*.mbt": [ "not", "wasm-gc" ],
-  },
+  targets: { "*.mbt": [ "not", "wasm-gc" ] },
 )

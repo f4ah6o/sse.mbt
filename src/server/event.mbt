@@ -39,6 +39,8 @@ pub fn format_event(event : SSEEvent) -> String {
 }
 
 // StringViewをStringに変換するヘルパー関数
+
+///|
 fn string_view_to_string(sv : StringView) -> String {
   let mut result = ""
   for c in sv {

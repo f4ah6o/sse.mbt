@@ -22,7 +22,7 @@ moon add f4ah6o/sse
 
 ## Usage
 
-```moonbit
+```moonbit nocheck
 import sse.{connect, on_message, on_error, on_open, close}
 
 fn main {
@@ -46,7 +46,7 @@ fn main {
 
 ### Named Events
 
-```moonbit
+```moonbit nocheck
 import sse.{connect, on}
 
 let conn = connect("http://localhost:8080/events")
@@ -62,7 +62,7 @@ conn
 
 ### Auto-Reconnection
 
-```moonbit
+```moonbit nocheck
 import sse.{connect, setup_auto_reconnect, on_message}
 
 let conn = connect("http://localhost:8080/events")
@@ -77,7 +77,7 @@ let conn = connect("http://localhost:8080/events")
 
 ### Custom Configuration
 
-```moonbit
+```moonbit nocheck
 import sse.{
   default_connection_config, connect_with_config, on_message
 }

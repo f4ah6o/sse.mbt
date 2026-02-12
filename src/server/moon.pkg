@@ -1,0 +1,14 @@
+import {
+  "moonbitlang/async/socket" @socket,
+  "moonbitlang/core/encoding/utf8" @utf8,
+}
+
+warnings = "-29"
+
+options(
+  targets: {
+    "broadcaster.mbt": [ "and", [ "not", "js" ], [ "not", "wasm-gc" ] ],
+    "connection.mbt": [ "and", [ "not", "js" ], [ "not", "wasm-gc" ] ],
+    "event.mbt": [ "and", [ "not", "js" ], [ "not", "wasm-gc" ] ],
+  },
+)
