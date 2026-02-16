@@ -3,7 +3,7 @@
 pub fn setup_auto_reconnect(conn : SseConnection) -> SseConnection {
   let reconnect_handler = create_reconnect_handler(conn)
   let error_handler_adapter = create_error_adapter(conn, reconnect_handler)
-  on_error(conn, error_handler_adapter)
+  let _ = on_error(conn, error_handler_adapter)
   conn
 }
 
@@ -12,7 +12,7 @@ pub fn setup_auto_reconnect(conn : SseConnection) -> SseConnection {
 extern "js" fn create_reconnect_handler(conn : SseConnection) -> ErrorHandler =
   #|(conn) => {
   #|  return function(evt) {
-  #|    const es = conn.event_source._0;
+  #|    const es = conn.event_source.raw;
   #||
   #|    // Check if we should attempt reconnection
   #|    if (conn.is_closed) {
@@ -40,7 +40,7 @@ extern "js" fn create_reconnect_handler(conn : SseConnection) -> ErrorHandler =
   #|            : new EventSource(conn.config.url);
   #|
   #|          // Replace the old EventSource with the new one
-  #|          conn.event_source._0 = newEs;
+  #|          conn.event_source.raw = newEs;
   #|
   #|          console.log('[sse.mbt] Reconnection successful');
   #|        } catch (e) {
@@ -70,23 +70,15 @@ pub fn reconnect(conn : SseConnection) -> Unit {
   if conn.is_closed {
     return
   }
-
-  // Close the existing connection
   event_source_close(conn.event_source)
-
-  // Create a new EventSource
-  let new_es =
-    if conn.config.with_credentials {
-      event_source_new_with_credentials(
-        conn.config.url,
-        conn.config.with_credentials,
-      )
-    } else {
-      event_source_new(conn.config.url)
-    }
-
-  // Replace the event source (this is a bit hacky but necessary for the mutable structure)
-  // We'll need to do this at the FFI level
+  let new_es = if conn.config.with_credentials {
+    event_source_new_with_credentials(
+      conn.config.url,
+      conn.config.with_credentials,
+    )
+  } else {
+    event_source_new(conn.config.url)
+  }
   replace_event_source(conn, new_es)
 }
 

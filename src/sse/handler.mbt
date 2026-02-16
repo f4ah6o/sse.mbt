@@ -4,9 +4,8 @@
 pub fn on(
   conn : SseConnection,
   event_name : String,
-  handler : EventHandler,
+  handler : @root.EventHandler,
 ) -> SseConnection {
-  // Create a JavaScript wrapper function that converts the event to SseMessage
   let js_handler = create_event_wrapper(event_name, handler)
   event_source_add_listener(conn.event_source, event_name, js_handler)
   conn
@@ -15,7 +14,10 @@ pub fn on(
 ///|
 /// Register an open handler
 /// Returns the SseConnection for chaining
-pub fn on_open(conn : SseConnection, handler : ConnectionStateHandler) -> SseConnection {
+pub fn on_open(
+  conn : SseConnection,
+  handler : @root.ConnectionStateHandler,
+) -> SseConnection {
   let js_handler = create_open_handler(conn, handler)
   event_source_on_open(conn.event_source, js_handler)
   conn
@@ -33,7 +35,10 @@ pub fn on_error(conn : SseConnection, handler : ErrorHandler) -> SseConnection {
 ///|
 /// Register a message handler (default "message" event)
 /// Returns the SseConnection for chaining
-pub fn on_message(conn : SseConnection, handler : EventHandler) -> SseConnection {
+pub fn on_message(
+  conn : SseConnection,
+  handler : @root.EventHandler,
+) -> SseConnection {
   on(conn, "message", handler)
 }
 
@@ -41,8 +46,8 @@ pub fn on_message(conn : SseConnection, handler : EventHandler) -> SseConnection
 /// Create a JavaScript wrapper function for SSE events
 extern "js" fn create_event_wrapper(
   event_name : String,
-  moonbit_handler : EventHandler,
-) -> @core.Any =
+  moonbit_handler : @root.EventHandler,
+) -> JsValue =
   #|(eventName, moonbitHandler) => {
   #|  return function(evt) {
   #|    const message = {
@@ -59,11 +64,10 @@ extern "js" fn create_event_wrapper(
 /// Create a JavaScript wrapper function for open event
 extern "js" fn create_open_handler(
   conn : SseConnection,
-  moonbit_handler : ConnectionStateHandler,
-) -> @core.Any =
+  moonbit_handler : @root.ConnectionStateHandler,
+) -> JsValue =
   #|(conn, moonbitHandler) => {
   #|  return function(evt) {
-  #|    // Reset retry count on successful connection
   #|    conn.retry_count = 0;
   #|    moonbitHandler({ $tag: 1 }); // EventState::Open
   #|  };
@@ -74,10 +78,9 @@ extern "js" fn create_open_handler(
 extern "js" fn create_error_handler(
   conn : SseConnection,
   moonbit_handler : ErrorHandler,
-) -> @core.Any =
+) -> JsValue =
   #|(conn, moonbitHandler) => {
   #|  return function(evt) {
-  #|    // Increment retry count on error
   #|    conn.retry_count = (conn.retry_count || 0) + 1;
   #|    moonbitHandler(evt);
   #|  };
@@ -88,7 +91,7 @@ extern "js" fn create_error_handler(
 pub fn off(
   conn : SseConnection,
   event_name : String,
-  handler : @core.Any,
+  handler : JsValue,
 ) -> SseConnection {
   event_source_remove_listener(conn.event_source, event_name, handler)
   conn

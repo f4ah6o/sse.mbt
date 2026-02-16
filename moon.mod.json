@@ -2,7 +2,6 @@
   "name": "f4ah6o/sse",
   "version": "0.2.0",
   "deps": {
-    "mizchi/js": "0.10.14",
     "moonbitlang/async": "0.16.6"
   },
   "readme": "README.md",

@@ -2,32 +2,30 @@
 /// SSE Connection structure
 pub struct SseConnection {
   event_source : EventSource
-  config : ConnectionConfig
-  mutable retry_count : Int
-  mutable is_closed : Bool
-  state_handlers : Array[ConnectionStateHandler]
+  config : @root.ConnectionConfig
+  mut retry_count : Int
+  mut is_closed : Bool
+  state_handlers : Array[@root.ConnectionStateHandler]
   error_handlers : Array[ErrorHandler]
 }
 
 ///|
 /// Create a new SSE connection
 pub fn connect(url : String) -> SseConnection {
-  connect_with_config(default_connection_config(url))
+  connect_with_config(@root.default_connection_config(url))
 }
 
 ///|
 /// Create a new SSE connection with custom configuration
-pub fn connect_with_config(config : ConnectionConfig) -> SseConnection {
-  let es =
-    if config.with_credentials {
-      event_source_new_with_credentials(config.url, config.with_credentials)
-    } else {
-      event_source_new(config.url)
-    }
-
+pub fn connect_with_config(config : @root.ConnectionConfig) -> SseConnection {
+  let es = if config.with_credentials {
+    event_source_new_with_credentials(config.url, config.with_credentials)
+  } else {
+    event_source_new(config.url)
+  }
   {
     event_source: es,
-    config: config,
+    config,
     retry_count: 0,
     is_closed: false,
     state_handlers: [],
@@ -37,16 +35,16 @@ pub fn connect_with_config(config : ConnectionConfig) -> SseConnection {
 
 ///|
 /// Get the current state of the connection
-pub fn get_connection_state(conn : SseConnection) -> EventState {
+pub fn get_connection_state(conn : SseConnection) -> @root.EventState {
   let ready_state = event_source_ready_state(conn.event_source)
-  ready_state_to_event_state(ready_state)
+  @root.ready_state_to_event_state(ready_state)
 }
 
 ///|
 /// Check if the connection is open
 pub fn is_open(conn : SseConnection) -> Bool {
   match get_connection_state(conn) {
-    EventState::Open => true
+    Open => true
     _ => false
   }
 }
@@ -55,7 +53,7 @@ pub fn is_open(conn : SseConnection) -> Bool {
 /// Check if the connection is closed
 pub fn is_closed(conn : SseConnection) -> Bool {
   match get_connection_state(conn) {
-    EventState::Closed => true
+    Closed => true
     _ => false
   }
 }
@@ -75,7 +73,7 @@ pub fn get_url(conn : SseConnection) -> String {
 
 ///|
 /// Get the configuration of the connection
-pub fn get_config(conn : SseConnection) -> ConnectionConfig {
+pub fn get_config(conn : SseConnection) -> @root.ConnectionConfig {
   conn.config
 }
 

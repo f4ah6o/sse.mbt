@@ -1,0 +1,13 @@
+import {
+  "f4ah6o/sse" @root,
+}
+
+options(
+  targets: {
+    "connection.mbt": "js",
+    "event.mbt": "js",
+    "event_source.mbt": "js",
+    "handler.mbt": "js",
+    "reconnection.mbt": "js",
+  },
+)

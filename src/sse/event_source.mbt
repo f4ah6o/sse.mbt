@@ -1,7 +1,7 @@
 ///|
 /// EventSource type - opaque wrapper around JavaScript EventSource
-pub type EventSource {
-  EventSource(raw : @core.Any)
+pub enum EventSource {
+  EventSource(raw~ : JsValue)
 }
 
 ///|
@@ -10,7 +10,7 @@ extern "js" fn event_source_new(url : String) -> EventSource =
   #|(url) => {
   #|  try {
   #|    const es = new EventSource(url);
-  #|    return { $tag: 0, _0: es };
+  #|    return { $tag: 0, raw: es };
   #|  } catch (e) {
   #|    console.error('[sse.mbt] Failed to create EventSource:', e);
   #|    throw e;
@@ -26,7 +26,7 @@ extern "js" fn event_source_new_with_credentials(
   #|(url, withCredentials) => {
   #|  try {
   #|    const es = new EventSource(url, { withCredentials: withCredentials });
-  #|    return { $tag: 0, _0: es };
+  #|    return { $tag: 0, raw: es };
   #|  } catch (e) {
   #|    console.error('[sse.mbt] Failed to create EventSource:', e);
   #|    throw e;
@@ -37,8 +37,8 @@ extern "js" fn event_source_new_with_credentials(
 /// Close an EventSource connection
 extern "js" fn event_source_close(es : EventSource) -> Unit =
   #|(es) => {
-  #|  if (es && es._0 && typeof es._0.close === 'function') {
-  #|    es._0.close();
+  #|  if (es && es.raw && typeof es.raw.close === 'function') {
+  #|    es.raw.close();
   #|  }
   #|}
 
@@ -46,39 +46,22 @@ extern "js" fn event_source_close(es : EventSource) -> Unit =
 /// Get the ready state of an EventSource connection
 extern "js" fn event_source_ready_state(es : EventSource) -> Int =
   #|(es) => {
-  #|  if (es && es._0 && typeof es._0.readyState !== 'undefined') {
-  #|    return es._0.readyState;
+  #|  if (es && es.raw && typeof es.raw.readyState !== 'undefined') {
+  #|    return es.raw.readyState;
   #|  }
   #|  return 3; // CLOSED
   #|}
-
-///|
-/// EventSource ready state constants
-pub const CONNECTING : Int = 0
-pub const OPEN : Int = 1
-pub const CLOSED : Int = 2
-
-///|
-/// Convert ready state to EventState
-pub fn ready_state_to_event_state(state : Int) -> EventState {
-  match state {
-    0 => EventState::Connecting
-    1 => EventState::Open
-    2 => EventState::Closed
-    _ => EventState::Error
-  }
-}
 
 ///|
 /// Add event listener for a specific event name
 extern "js" fn event_source_add_listener(
   es : EventSource,
   event_name : String,
-  handler : @core.Any,
+  handler : JsValue,
 ) -> Unit =
   #|(es, eventName, handler) => {
-  #|  if (es && es._0 && typeof es._0.addEventListener === 'function') {
-  #|    es._0.addEventListener(eventName, handler);
+  #|  if (es && es.raw && typeof es.raw.addEventListener === 'function') {
+  #|    es.raw.addEventListener(eventName, handler);
   #|  }
   #|}
 
@@ -87,38 +70,47 @@ extern "js" fn event_source_add_listener(
 extern "js" fn event_source_remove_listener(
   es : EventSource,
   event_name : String,
-  handler : @core.Any,
+  handler : JsValue,
 ) -> Unit =
   #|(es, eventName, handler) => {
-  #|  if (es && es._0 && typeof es._0.removeEventListener === 'function') {
-  #|    es._0.removeEventListener(eventName, handler);
+  #|  if (es && es.raw && typeof es.raw.removeEventListener === 'function') {
+  #|    es.raw.removeEventListener(eventName, handler);
   #|  }
   #|}
 
 ///|
 /// Add onopen handler
-extern "js" fn event_source_on_open(es : EventSource, handler : @core.Any) -> Unit =
+extern "js" fn event_source_on_open(
+  es : EventSource,
+  handler : JsValue,
+) -> Unit =
   #|(es, handler) => {
-  #|  if (es && es._0) {
-  #|    es._0.onopen = handler;
+  #|  if (es && es.raw) {
+  #|    es.raw.onopen = handler;
   #|  }
   #|}
 
 ///|
 /// Add onerror handler
-extern "js" fn event_source_on_error(es : EventSource, handler : @core.Any) -> Unit =
+extern "js" fn event_source_on_error(
+  es : EventSource,
+  handler : JsValue,
+) -> Unit =
   #|(es, handler) => {
-  #|  if (es && es._0) {
-  #|    es._0.onerror = handler;
+  #|  if (es && es.raw) {
+  #|    es.raw.onerror = handler;
   #|  }
   #|}
 
 ///|
 /// Add onmessage handler
-extern "js" fn event_source_on_message(es : EventSource, handler : @core.Any) -> Unit =
+extern "js" fn event_source_on_message(
+  es : EventSource,
+  handler : JsValue,
+) -> Unit =
   #|(es, handler) => {
-  #|  if (es && es._0) {
-  #|    es._0.onmessage = handler;
+  #|  if (es && es.raw) {
+  #|    es.raw.onmessage = handler;
   #|  }
   #|}
 
@@ -126,8 +118,8 @@ extern "js" fn event_source_on_message(es : EventSource, handler : @core.Any) ->
 /// Get the URL of an EventSource
 extern "js" fn event_source_url(es : EventSource) -> String =
   #|(es) => {
-  #|  if (es && es._0 && typeof es._0.url === 'string') {
-  #|    return es._0.url;
+  #|  if (es && es.raw && typeof es.raw.url === 'string') {
+  #|    return es.raw.url;
   #|  }
   #|  return '';
   #|}
