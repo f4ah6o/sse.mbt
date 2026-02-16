@@ -103,18 +103,6 @@ extern "js" fn event_source_on_error(
   #|}
 
 ///|
-/// Add onmessage handler
-extern "js" fn event_source_on_message(
-  es : EventSource,
-  handler : JsValue,
-) -> Unit =
-  #|(es, handler) => {
-  #|  if (es && es.raw) {
-  #|    es.raw.onmessage = handler;
-  #|  }
-  #|}
-
-///|
 /// Get the URL of an EventSource
 extern "js" fn event_source_url(es : EventSource) -> String =
   #|(es) => {

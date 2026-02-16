@@ -2,6 +2,8 @@ import {
   "f4ah6o/sse" @root,
 }
 
+warnings = "-29"
+
 options(
   targets: {
     "connection.mbt": "js",
