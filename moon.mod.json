@@ -9,5 +9,6 @@
   "license": "Apache-2.0",
   "keywords": [],
   "description": "Server-Sent Events (SSE) support for MoonBit (JS client + Native server)",
-  "preferred-target": "js"
+  "preferred-target": "js",
+  "warn-list": "-27"
 }
