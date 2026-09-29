@@ -1,5 +1,3 @@
-warnings = "-9"
-
-options(
-  "is-main": false,
-)
+import {
+  "moonbitlang/core/debug",
+}

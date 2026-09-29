@@ -1,0 +1,47 @@
+name: MoonBit CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  moonbit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v7
+
+      - name: Cache Mooncakes dependencies
+        uses: actions/cache@v6
+        with:
+          path: .mooncakes
+          key: mooncakes-${{ runner.os }}-${{ hashFiles('moon.mod') }}
+
+      - name: Install latest stable MoonBit toolchain
+        run: |
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
+          echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
+          moon version --all
+
+      - name: Update package registry index
+        run: moon update
+
+      - name: Check formatting
+        run: moon fmt --check
+
+      - name: Check all targets
+        run: moon check --target all
+
+      - name: Check target-specific packages
+        run: |
+          moon check src/sse --target js
+          moon check src/server --target native
+
+      - name: Test all targets
+        run: moon test --target all
+
+      - name: Verify publish package contents
+        run: moon package --list

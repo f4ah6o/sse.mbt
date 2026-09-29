@@ -5,7 +5,23 @@ pub enum EventState {
   Open
   Closed
   Error
-} derive(Show)
+} derive(Debug)
+
+///|
+pub impl Show for EventState with fn to_string(self) {
+  match self {
+    EventState::Connecting => "Connecting"
+    EventState::Open => "Open"
+    EventState::Closed => "Closed"
+    EventState::Error => "Error"
+  }
+}
+
+///|
+pub extend EventState with Show::{to_string, output}
+
+///|
+pub extend EventState with @debug.Debug::{to_repr}
 
 ///|
 /// SSE Message structure
@@ -28,7 +44,7 @@ pub struct ConnectionConfig {
 ///|
 /// Default connection configuration
 pub fn default_connection_config(url : String) -> ConnectionConfig {
-  { url, with_credentials: false, reconnect_interval: 3000, max_retries: 10 }
+  { url, with_credentials: false, reconnect_interval: 3000, max_retries: 10, }
 }
 
 ///|
@@ -66,16 +82,44 @@ pub(all) struct SSEEvent {
   data : String
   event : String?
   id : String?
-} derive(Show, Eq)
+} derive(Debug, Eq)
+
+///|
+fn option_string_to_string(value : String?) -> String {
+  match value {
+    Some(value) => "Some(" + value + ")"
+    None => "None"
+  }
+}
+
+///|
+pub impl Show for SSEEvent with fn to_string(self) {
+  "{data: " +
+  self.data +
+  ", event: " +
+  option_string_to_string(self.event) +
+  ", id: " +
+  option_string_to_string(self.id) +
+  "}"
+}
+
+///|
+pub extend SSEEvent with Show::{to_string, output}
+
+///|
+pub extend SSEEvent with Eq::{not_equal, equal}
+
+///|
+pub extend SSEEvent with @debug.Debug::{to_repr}
 
 ///|
 pub fn SSEEvent::new(data : String, event : String, id : String?) -> SSEEvent {
-  { data, event: Some(event), id }
+  { data, event: Some(event), id, }
 }
 
 ///|
 pub fn SSEEvent::data_only(data : String) -> SSEEvent {
-  { data, event: None, id: None }
+  { data, event: None, id: None, }
 }
 
 ///|
@@ -91,7 +135,7 @@ pub fn format_event(event : SSEEvent) -> String {
   }
   let data_lines = event.data.split("\n")
   for line_view in data_lines {
-    let line = line_view.to_string()
+    let line = line_view.to_owned()
     result = result + "data: " + line + "\n"
   }
   result + "\n"

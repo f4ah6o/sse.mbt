@@ -8,7 +8,7 @@ pub struct ServerConnection {
 
 ///|
 pub fn ServerConnection::new(socket : @socket.Tcp) -> ServerConnection {
-  { socket, is_alive_ref: { val: true } }
+  { socket, is_alive_ref: { val: true, }, }
 }
 
 ///|

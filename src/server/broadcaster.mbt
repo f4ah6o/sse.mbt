@@ -7,7 +7,7 @@ pub struct Broadcaster {
 
 ///|
 pub fn Broadcaster::new() -> Broadcaster {
-  { connections_ref: { val: [] } }
+  { connections_ref: { val: [], }, }
 }
 
 ///|

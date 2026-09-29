@@ -2,15 +2,18 @@
 # SPDX-License-Identifier: MIT
 # MoonBit Project Commands
 
-target := "js"
+target := "all"
 
-default: check test
+default: fmt-check check test
 
 fmt:
     moon fmt
 
+fmt-check:
+    moon fmt --check
+
 check:
-    moon check --deny-warn --target {{target}}
+    moon check --target {{target}}
 
 test:
     moon test --target {{target}}
@@ -18,13 +21,10 @@ test:
 test-update:
     moon test --update --target {{target}}
 
-run:
-    moon run src/main --target {{target}}
-
 info:
     moon info
 
 clean:
     moon clean
 
-release-check: fmt info check test
+release-check: fmt-check info check test

@@ -28,9 +28,9 @@
 
 ## Notes
 
-- Tests are in `test/sse_test.mbt` using inspect-based assertions
-- Tests use property-based approach with multiple fixture values
-- FFI functions require JS target (`--target js`)
+- Tests are in `sse_test.mbt` and use inspect-based assertions
+- Tests use multiple fixture values to check properties and boundaries
+- The browser client package is JS-only; the server package is native-only
 <!-- aletheia:end -->
 
 ---
@@ -64,7 +64,7 @@ This document describes the property-based tests for the SSE (Server-Sent Events
 ## Running Tests
 
 ```bash
-moon test --target js
+moon test --target all
 ```
 
 ## Properties Tested

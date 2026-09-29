@@ -12,64 +12,67 @@ This library provides a type-safe interface to the browser's [EventSource API](h
 - Connection state management
 - Event message parsing with optional ID tracking
 - Property-based testing coverage
-- No Dependencies: Built on top of `mizchi/js` bindings.
+- Browser client built on the native `EventSource` API
+- Native-only server support uses `moonbitlang/async/socket`
 
 ## Installation
 
 ```bash
-moon add f4ah6o/sse
+moon add f4ah6o/sse@0.3.1
 ```
 
 ## Usage
 
-```moonbit nocheck
-import sse.{connect, on_message, on_error, on_open, close}
+```mbt nocheck
+///|
+import {
+  "f4ah6o/sse/src/sse",
+}
 
+///|
 fn main {
-  let conn = connect("http://localhost:8080/events")
+  let conn = @sse.connect("http://localhost:8080/events")
 
   conn
-    |> on_message(fn(msg) {
-      println("Received: \{msg.data}")
-    })
-    |> on_error(fn(err) {
-      println("Error: \{err}")
-    })
-    |> on_open(fn(_state) {
-      println("Connection opened")
-    })
+  |> @sse.on_message(fn(msg) { println("Received: \{msg.data}") })
+  |> @sse.on_error(fn(err) { println("Error: \{err}") })
+  |> @sse.on_open(fn(_state) { println("Connection opened") })
 
   // Close when done
-  close(conn)
+  @sse.close(conn)
 }
 ```
 
 ### Named Events
 
-```moonbit nocheck
-import sse.{connect, on}
+```mbt nocheck
+import {
+  "f4ah6o/sse/src/sse" @sse,
+}
 
-let conn = connect("http://localhost:8080/events")
+let conn = @sse.connect("http://localhost:8080/events")
 
 conn
-  |> on("notification", fn(msg) {
+  |> @sse.on("notification", fn(msg) {
     println("Notification: \{msg.data}")
   })
-  |> on("update", fn(msg) {
+  |> @sse.on("update", fn(msg) {
     println("Update: \{msg.data}")
   })
 ```
 
 ### Auto-Reconnection
 
-```moonbit nocheck
-import sse.{connect, setup_auto_reconnect, on_message}
+```mbt nocheck
+///|
+import {
+  "f4ah6o/sse/src/sse",
+}
 
-let conn = connect("http://localhost:8080/events")
-  |> setup_auto_reconnect
-  |> on_message(fn(msg) {
-    println("Received: \{msg.data}")
-  })
+///|
+let conn = @sse.connect("http://localhost:8080/events")
+  |> @sse.setup_auto_reconnect
+  |> @sse.on_message(fn(msg) { println("Received: \{msg.data}") })
 
 // Will automatically reconnect on connection loss
 // up to max_retries times with reconnect_interval delay
@@ -77,20 +80,21 @@ let conn = connect("http://localhost:8080/events")
 
 ### Custom Configuration
 
-```moonbit nocheck
-import sse.{
-  default_connection_config, connect_with_config, on_message
+```mbt nocheck
+import {
+  "f4ah6o/sse" @root,
+  "f4ah6o/sse/src/sse" @sse,
 }
 
 let config = {
-  ...default_connection_config("http://localhost:8080/events")
+  ...@root.default_connection_config("http://localhost:8080/events")
   with_credentials: true
   reconnect_interval: 5000
   max_retries: 5
 }
 
-let conn = connect_with_config(config)
-  |> on_message(fn(msg) {
+let conn = @sse.connect_with_config(config)
+  |> @sse.on_message(fn(msg) {
     println("Event: \{msg.event_name}, Data: \{msg.data}")
   })
 ```
@@ -98,14 +102,19 @@ let conn = connect_with_config(config)
 ## Building & Testing
 
 ```bash
-# Build for JavaScript target
-moon build --target js
+# Check formatting and all supported targets
+moon fmt --check
+moon check --target all
 
-# Run tests
-moon test --target js
+# Check each target-specific subpackage
+moon check src/sse --target js
+moon check src/server --target native
+
+# Run tests for all supported targets
+moon test --target all
 
 # Update snapshots after behavioral changes
-moon test --target js --update
+moon test --target all --update
 ```
 
 ## License

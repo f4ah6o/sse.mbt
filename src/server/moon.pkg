@@ -1,11 +1,6 @@
 import {
-  "f4ah6o/sse",
-  "moonbitlang/async/socket" @socket,
-  "moonbitlang/core/encoding/utf8" @utf8,
+  "moonbitlang/async/socket",
+  "moonbitlang/core/encoding/utf8",
 }
 
-warnings = "-29"
-
-options(
-  targets: { "broadcaster.mbt": "native", "connection.mbt": "native" },
-)
+supported_targets = "native"
