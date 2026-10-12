@@ -74,3 +74,37 @@ moon test --target all
 3. **Construction**: URL preserved through `default_connection_config`
 4. **Invariant**: Default values (reconnect_interval, max_retries) are positive
 5. **Boundary**: Max retry threshold correctly identifies exceeded state
+
+## Generated formatter property (official core QuickCheck)
+
+`format_event_property_test.mbt` adds an actual generated property using
+`moonbitlang/core/quickcheck`, with seed `20261012`, 2,000 cases,
+maximum size 32 and up to 1,000 shrink attempts. Core's byte-array, option and
+tuple generators/shrinkers drive bounded data, event-name and ID fields.
+
+The formatter output is interpreted by a test-only, independent LF-stream
+interpreter based on [WHATWG HTML 9.2.6](https://html.spec.whatwg.org/multipage/server-sent-events.html#event-stream-interpretation),
+then checked against the generated data and expected dispatch metadata. Fixed
+vectors independently exercise the interpreter's first-colon handling, one-space
+removal, blank-line dispatch, incomplete-event discard, default event type, and
+ID retention/reset/NUL-ignore rules. Formatter examples cover empty data,
+leading/trailing/repeated LF, leading spaces, colons, tabs, Unicode and data NUL.
+
+Scope is deliberately bounded: data contains no CR; event names and IDs contain
+no CR, LF or NUL. The finite alphabet includes non-ASCII text but is not exhaustive
+Unicode testing. This does not validate arbitrary-field sanitization, UTF-8 byte
+decoding, CRLF parsing, browser behavior, networking, reconnection or the server.
+
+A native turtles 0.4.6 run restricted to `types.mbt`, with the default operator
+groups plus opt-in `body`, generated 25 matching mutants before and after this
+addition: 5 killed, 20 unviable, zero survivors/timeouts in both runs. The new
+property also kills the two formatter body replacements; both report the
+counterexample `([], None, None)`. There are no new or property-only kills and no
+mutation-score improvement. The two viable formatter mutants are coarse whole-body
+replacements, so this mutation result is not evidence of comprehensive formatter
+coverage.
+
+```bash
+turtles --target native --file types.mbt \
+  --operators comparison,boolean,arithmetic,literal,condition,body --jobs 2
+```
