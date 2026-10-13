@@ -44,7 +44,7 @@ extern "js" fn event_source_close(es : EventSource) -> Unit =
 
 ///|
 /// Get the ready state of an EventSource connection
-extern "js" fn event_source_ready_state(es : EventSource) -> Int =
+extern "js" fn event_source_ready_state(es : EventSource) -> Int32 =
   #|(es) => {
   #|  if (es && es.raw && typeof es.raw.readyState !== 'undefined') {
   #|    return es.raw.readyState;
