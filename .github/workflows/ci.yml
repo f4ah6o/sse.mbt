@@ -7,6 +7,9 @@ on:
 permissions:
   contents: read
 
+env:
+  MOONBIT_INSTALL_VERSION: "0.10.14+7d59c7ec9"
+
 jobs:
   moonbit:
     runs-on: ubuntu-latest
@@ -20,10 +23,11 @@ jobs:
           path: .mooncakes
           key: mooncakes-${{ runner.os }}-${{ hashFiles('moon.mod') }}
 
-      - name: Install latest stable MoonBit toolchain
+      - name: Install pinned MoonBit toolchain
         run: |
           curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
           echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
+          export PATH="$HOME/.moon/bin:$PATH"
           moon version --all
 
       - name: Update package registry index
