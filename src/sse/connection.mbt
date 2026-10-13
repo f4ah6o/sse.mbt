@@ -3,7 +3,7 @@
 pub struct SseConnection {
   event_source : EventSource
   config : @root.ConnectionConfig
-  mut retry_count : Int
+  mut retry_count : Int32
   mut is_closed : Bool
   state_handlers : Array[@root.ConnectionStateHandler]
   error_handlers : Array[ErrorHandler]
@@ -79,7 +79,7 @@ pub fn get_config(conn : SseConnection) -> @root.ConnectionConfig {
 
 ///|
 /// Get the retry count
-pub fn get_retry_count(conn : SseConnection) -> Int {
+pub fn get_retry_count(conn : SseConnection) -> Int32 {
   conn.retry_count
 }
 

@@ -37,8 +37,8 @@ pub struct SseMessage {
 pub struct ConnectionConfig {
   url : String
   with_credentials : Bool
-  reconnect_interval : Int
-  max_retries : Int
+  reconnect_interval : Int32
+  max_retries : Int32
 }
 
 ///|
@@ -57,17 +57,17 @@ pub type ConnectionStateHandler = (EventState) -> Unit
 
 ///|
 /// EventSource ready state constants
-pub const CONNECTING : Int = 0
+pub const CONNECTING : Int32 = 0
 
 ///|
-pub const OPEN : Int = 1
+pub const OPEN : Int32 = 1
 
 ///|
-pub const CLOSED : Int = 2
+pub const CLOSED : Int32 = 2
 
 ///|
 /// Convert ready state to EventState
-pub fn ready_state_to_event_state(state : Int) -> EventState {
+pub fn ready_state_to_event_state(state : Int32) -> EventState {
   match state {
     0 => EventState::Connecting
     1 => EventState::Open
